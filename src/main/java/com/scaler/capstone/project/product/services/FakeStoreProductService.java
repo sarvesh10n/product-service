@@ -1,6 +1,7 @@
 package com.scaler.capstone.project.product.services;
 
 import com.scaler.capstone.project.product.dto.FakeStoreProductDTO;
+import com.scaler.capstone.project.product.exceptions.ProductNotExistException;
 import com.scaler.capstone.project.product.models.Category;
 import com.scaler.capstone.project.product.models.Product;
 import lombok.extern.log4j.Log4j2;
@@ -24,17 +25,20 @@ public class FakeStoreProductService implements ProductService {
 
     //ToDo : Need to implement all other 7 APIs of fake store    16 oct, 23 oct, 25 oct
     @Override
-    public Product getSingleProduct(Long id) {
-        try {
-            FakeStoreProductDTO response = restTemplate.getForObject(
+    public Product getSingleProduct(Long id) throws ProductNotExistException {
+
+            FakeStoreProductDTO productDto = restTemplate.getForObject(
                     "https://fakestoreapi.com/products/" + id,
                     FakeStoreProductDTO.class);
 
-            return convertFakeStoreToProduct(response);
-        }catch (Exception e){
-            log.error("Some Exception occurred",e);
-            return null;
-        }
+            if (productDto == null) {
+                throw new ProductNotExistException(
+                        "Product with id: " + id + " doesn't exist."
+                );
+            }
+
+            return convertFakeStoreToProduct(productDto);
+
     }
 
     @Override

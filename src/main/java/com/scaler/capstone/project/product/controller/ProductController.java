@@ -1,6 +1,7 @@
 package com.scaler.capstone.project.product.controller;
 
 import com.scaler.capstone.project.product.dto.FakeStoreProductDTO;
+import com.scaler.capstone.project.product.exceptions.ProductNotExistException;
 import com.scaler.capstone.project.product.models.Product;
 import com.scaler.capstone.project.product.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,15 @@ public class ProductController {
 
     @GetMapping("/")
     public ResponseEntity<List<Product>> getAllProducts(){
-        int a =1/0;
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Product getSingleProduct(@PathVariable("id") long id){
-        return productService.getSingleProduct(id);
+    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") long id) throws ProductNotExistException {
+        return new ResponseEntity<>(
+                productService.getSingleProduct(id),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/add")
@@ -47,4 +50,9 @@ public class ProductController {
         // put is used replace whole existing data with new data
         return new Product();
     }
+
+//    @ExceptionHandler(ProductNotExistException.class)
+//    public ResponseEntity<Void> handleProductNotExistException() {
+//        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//    }
 }

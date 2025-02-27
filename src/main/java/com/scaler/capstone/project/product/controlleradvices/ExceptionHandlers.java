@@ -1,5 +1,7 @@
 package com.scaler.capstone.project.product.controlleradvices;
 
+import com.scaler.capstone.project.product.dto.ExceptionDTO;
+import com.scaler.capstone.project.product.exceptions.ProductNotExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,5 +17,15 @@ public class ExceptionHandlers {
     @ExceptionHandler(ArrayIndexOutOfBoundsException.class)  //TODO : This related to @ControllerAdvise
     public ResponseEntity<Void> handleArrayIndexOutOfBondException(){
         return new ResponseEntity<> (HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ProductNotExistException.class)
+    public ResponseEntity<ExceptionDTO> handleProductNotExistsException(
+            ProductNotExistException exception
+    ) {
+        ExceptionDTO dto = new ExceptionDTO();
+        dto.setMessage(exception.getMessage());
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }
