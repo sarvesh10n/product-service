@@ -3,6 +3,7 @@ package com.scaler.capstone.project.product.services;
 import com.scaler.capstone.project.product.dto.FakeStoreProductDTO;
 import com.scaler.capstone.project.product.models.Category;
 import com.scaler.capstone.project.product.models.Product;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,7 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Service
-public class FakeStoreProductService implements ProductService{
+@Log4j2
+public class FakeStoreProductService implements ProductService {
 
     private RestTemplate restTemplate;
 
@@ -22,24 +24,39 @@ public class FakeStoreProductService implements ProductService{
     //ToDo : Need to implement all other 7 APIs of fake store    16 oct, 23 oct, 25 oct
     @Override
     public Product getSingleProduct(Long id) {
-        FakeStoreProductDTO response = restTemplate.getForObject(
-                "https://fakestoreapi.com/products/"+id,
-                FakeStoreProductDTO.class);
+        try {
+            FakeStoreProductDTO response = restTemplate.getForObject(
+                    "https://fakestoreapi.com/products/" + id,
+                    FakeStoreProductDTO.class);
 
-        return convertFakeStoreToProduct(response);
+            return convertFakeStoreToProduct(response);
+        }catch (Exception e){
+            log.error("Some Exception occurred",e);
+            return null;
+        }
     }
 
     @Override
     public FakeStoreProductDTO addNewProduct(FakeStoreProductDTO product) {
-        FakeStoreProductDTO response = restTemplate.postForObject("https://fakestoreapi.com/products",product,FakeStoreProductDTO.class);
-        return response;
+        try {
+            FakeStoreProductDTO response = restTemplate.postForObject("https://fakestoreapi.com/products", product, FakeStoreProductDTO.class);
+            return response;
+        }catch (Exception e){
+            log.error("Some Exception occurred",e);
+            return null;
+        }
     }
 
     @Override
     public List<Product> getAllProducts() {
+//        try {
         //Todo Need add Product [].Class instead List.Class
         List<Product> productList = restTemplate.getForObject("https://fakestoreapi.com/products", List.class);
         return productList;
+//        }catch (Exception e){
+//            log.error("Some Exception occurred",e);
+//            return null;
+//        }
     }
 
     private Product convertFakeStoreToProduct(FakeStoreProductDTO FakeStoreProductDTO ) {
@@ -53,4 +70,5 @@ public class FakeStoreProductService implements ProductService{
         product.setImageUrl(FakeStoreProductDTO.getImage());
         return product;
     }
+
 }
