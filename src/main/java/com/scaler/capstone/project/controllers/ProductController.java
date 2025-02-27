@@ -1,9 +1,9 @@
-package com.scaler.capstone.project.product.controller;
+package com.scaler.capstone.project.controllers;
 
-import com.scaler.capstone.project.product.dto.FakeStoreProductDTO;
-import com.scaler.capstone.project.product.exceptions.ProductNotExistException;
-import com.scaler.capstone.project.product.models.Product;
-import com.scaler.capstone.project.product.services.ProductService;
+import com.scaler.capstone.project.dto.FakeStoreProductDTO;
+import com.scaler.capstone.project.exceptions.ProductNotExistException;
+import com.scaler.capstone.project.models.Product;
+import com.scaler.capstone.project.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

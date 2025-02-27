@@ -1,4 +1,4 @@
-package com.scaler.capstone.project.product.exceptions;
+package com.scaler.capstone.project.exceptions;
 
 
 public class ProductNotExistException extends Exception {

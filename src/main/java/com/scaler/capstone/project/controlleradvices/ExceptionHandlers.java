@@ -1,7 +1,7 @@
-package com.scaler.capstone.project.product.controlleradvices;
+package com.scaler.capstone.project.controlleradvices;
 
-import com.scaler.capstone.project.product.dto.ExceptionDTO;
-import com.scaler.capstone.project.product.exceptions.ProductNotExistException;
+import com.scaler.capstone.project.dto.ExceptionDTO;
+import com.scaler.capstone.project.exceptions.ProductNotExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,4 +1,4 @@
-package com.scaler.capstone.project.product.models;
+package com.scaler.capstone.project.models;
 
 import lombok.Getter;
 import lombok.Setter;

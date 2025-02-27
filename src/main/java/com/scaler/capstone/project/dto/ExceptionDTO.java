@@ -1,4 +1,4 @@
-package com.scaler.capstone.project.product.dto;
+package com.scaler.capstone.project.dto;
 
 import lombok.Getter;
 import lombok.Setter;
