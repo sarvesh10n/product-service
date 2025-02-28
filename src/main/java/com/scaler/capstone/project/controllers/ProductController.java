@@ -1,10 +1,10 @@
 package com.scaler.capstone.project.controllers;
 
-import com.scaler.capstone.project.dto.FakeStoreProductDTO;
 import com.scaler.capstone.project.exceptions.ProductNotExistException;
 import com.scaler.capstone.project.models.Product;
 import com.scaler.capstone.project.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+
     private ProductService productService;
+
     @Autowired
-    public ProductController(ProductService productService){
+    public ProductController(@Qualifier("selfProductService") ProductService productService) {
         this.productService = productService;
     }
+
 
     @GetMapping("/")
     public ResponseEntity<List<Product>> getAllProducts(){
@@ -33,9 +36,8 @@ public class ProductController {
         );
     }
 
-    @PostMapping("/add")
-    public FakeStoreProductDTO addNewProduct(@RequestBody FakeStoreProductDTO product){
-
+    @PostMapping()
+    public Product addNewProduct(@RequestBody Product product){
         return productService.addNewProduct(product);
     }
 
