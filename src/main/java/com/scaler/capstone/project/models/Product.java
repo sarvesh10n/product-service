@@ -1,9 +1,6 @@
 package com.scaler.capstone.project.models;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +13,8 @@ public class Product extends BaseModel {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Category category;
+
+    @Column(length = 700)
     private String description;
     private String imageUrl;
     private int numberOfSales;
