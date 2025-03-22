@@ -1,5 +1,6 @@
-package com.scaler.capstone.product.models;
+package com.scaler.capstone.product.models.product;
 
+import com.scaler.capstone.product.models.BaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,14 +9,11 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Product extends BaseModel {
-    private String title;
-    private double price;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Category category;
-
-    @Column(length = 700)
+    private String title;
     private String description;
-    private String imageUrl;
-    private int numberOfSales;
+    private double price;
+    private int stockQuantity;
+    private double rating;
 }

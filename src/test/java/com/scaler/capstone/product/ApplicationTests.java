@@ -1,7 +1,7 @@
 package com.scaler.capstone.product;
 
-import com.scaler.capstone.product.models.Category;
-import com.scaler.capstone.product.models.Product;
+import com.scaler.capstone.product.models.product.Category;
+import com.scaler.capstone.product.models.product.Product;
 import com.scaler.capstone.product.repositories.CategoryRepository;
 import com.scaler.capstone.product.repositories.ProductRepository;
 import com.scaler.capstone.product.repositories.projections.ProductWithIdAndTitle;
