@@ -6,12 +6,18 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 public class Order extends BaseModel {
+
+    public Order() {
+        this.orderItems = new ArrayList<>();
+    }
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
@@ -19,9 +25,14 @@ public class Order extends BaseModel {
     @JoinColumn(name = "user_id")
     private User user;
     private double totalAmount;
-    private String paymentMethod;
-    private String paymentStatus;
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     private String trackingNumber;
     private String transactionId;
 }

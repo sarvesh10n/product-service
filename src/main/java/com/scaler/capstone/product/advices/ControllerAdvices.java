@@ -4,6 +4,7 @@ import com.scaler.capstone.product.dto.ExceptionDTO;
 import com.scaler.capstone.product.exceptions.InsufficientStockException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
 import com.scaler.capstone.product.exceptions.ProductNotExistException;
+import com.scaler.capstone.product.exceptions.ResourceAccessForbiddenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,5 +36,11 @@ public class ControllerAdvices {
     ResponseEntity<ExceptionDTO> handleInsufficientException(InsufficientStockException ex){
         ExceptionDTO exceptionDto = new ExceptionDTO(HttpStatus.BAD_REQUEST, ex.getMessage());
         return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceAccessForbiddenException.class)
+    ResponseEntity<ExceptionDTO> handleForbiddenException(ResourceAccessForbiddenException ex){
+        ExceptionDTO exceptionDto = new ExceptionDTO(HttpStatus.FORBIDDEN, ex.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.FORBIDDEN);
     }
 }
