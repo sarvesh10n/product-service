@@ -1,8 +1,7 @@
 package com.scaler.capstone.product.models;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.scaler.capstone.product.models.cart.Cart;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +18,7 @@ public class User {
     private String address;
     @ElementCollection
     private List<String> roles;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
 }

@@ -22,4 +22,6 @@ public class Order extends BaseModel {
     private String paymentMethod;
     private String paymentStatus;
     private String orderStatus;
+    private String trackingNumber;
+    private String transactionId;
 }

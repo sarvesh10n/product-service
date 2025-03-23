@@ -1,6 +1,7 @@
 package com.scaler.capstone.product.advices;
 
 import com.scaler.capstone.product.dto.ExceptionDTO;
+import com.scaler.capstone.product.exceptions.InsufficientStockException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
 import com.scaler.capstone.product.exceptions.ProductNotExistException;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,12 @@ public class ControllerAdvices {
 
     @ExceptionHandler(InvalidDataException.class)
     ResponseEntity<ExceptionDTO> handleInvalidException(InvalidDataException ex){
+        ExceptionDTO exceptionDto = new ExceptionDTO(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    ResponseEntity<ExceptionDTO> handleInsufficientException(InsufficientStockException ex){
         ExceptionDTO exceptionDto = new ExceptionDTO(HttpStatus.BAD_REQUEST, ex.getMessage());
         return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
     }
