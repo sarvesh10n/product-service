@@ -34,5 +34,9 @@ public class Order extends BaseModel {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private String trackingNumber;
-    private String transactionId;
+    private String invoiceNumber;
+    private String paymentOrderId;
+    private String paymentLink;
+    private String paymentId;
+    private String refundId;
 }

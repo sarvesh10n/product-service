@@ -3,6 +3,7 @@ package com.scaler.capstone.product.controllers;
 import com.scaler.capstone.product.dto.OrderDTO;
 import com.scaler.capstone.product.exceptions.InsufficientStockException;
 import com.scaler.capstone.product.exceptions.NotFoundException;
+import com.scaler.capstone.product.exceptions.PaymentClientException;
 import com.scaler.capstone.product.models.User;
 import com.scaler.capstone.product.models.order.Order;
 import com.scaler.capstone.product.models.order.OrderStatus;
@@ -31,7 +32,8 @@ public class OrderController {
 
     // Place order (initiate payment)
     @PostMapping("/place")
-    public ResponseEntity<OrderDTO> placeOrder(Authentication authentication) throws InsufficientStockException, NotFoundException {
+    public ResponseEntity<OrderDTO> placeOrder(Authentication authentication) throws InsufficientStockException,
+            NotFoundException, PaymentClientException {
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
 
@@ -40,9 +42,13 @@ public class OrderController {
     }
 
     // Confirm payment (called by frontend after payment completion)
-    @PostMapping("/confirm-payment/{transactionId}")
-    public ResponseEntity<OrderDTO> confirmPayment(@PathVariable String transactionId) throws NotFoundException {
-        Order order = orderService.confirmPayment(transactionId);
+    @PostMapping("/confirm-payment/{paymentOrderId}")
+    public ResponseEntity<OrderDTO> confirmPayment(Authentication authentication, @PathVariable String paymentOrderId)
+            throws NotFoundException, PaymentClientException {
+        Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
+        User user = UserUtils.createUserIfNotExist(jwt, userRepository);
+
+        Order order = orderService.confirmPayment(user.getId(), paymentOrderId);
         return new ResponseEntity<>(OrderDTO.fromOrder(order), HttpStatus.CREATED);
     }
 
@@ -67,7 +73,7 @@ public class OrderController {
     }
 
     @PostMapping("/cancel/{orderId}")
-    public ResponseEntity<OrderDTO> cancelOrder(@PathVariable Long orderId) throws NotFoundException {
+    public ResponseEntity<OrderDTO> cancelOrder(@PathVariable Long orderId) throws NotFoundException, PaymentClientException {
         Order order = orderService.cancelOrder(orderId);
         return new ResponseEntity<>(OrderDTO.fromOrder(order), HttpStatus.OK);
     }
