@@ -2,6 +2,7 @@ package com.scaler.capstone.product.controllers;
 
 import com.scaler.capstone.product.dto.CreateProductDTO;
 import com.scaler.capstone.product.dto.ProductDTO;
+import com.scaler.capstone.product.enums.Roles;
 import com.scaler.capstone.product.exceptions.CategoryNotExistException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
 import com.scaler.capstone.product.exceptions.ProductNotExistException;
@@ -42,9 +43,10 @@ public class ProductController {
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
 
-        if(!(user.getRoles().contains("ADMIN")) && (!user.getRoles().contains("SUPER_ADMIN")) ) {
+        if (!(user.getRoles().contains(Roles.ADMIN.name()) || user.getRoles().contains(Roles.SUPER_ADMIN.name()))) {
             throw new ResourceAccessForbiddenException("No Access to create product");
         }
+
         Product product = productService.createProduct(createProductDTO);
         return new ResponseEntity<>(ProductDTO.fromProduct(product), HttpStatus.CREATED);
     }
@@ -74,9 +76,10 @@ public class ProductController {
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
 
-        if(!(user.getRoles().contains("ADMIN")) && (!user.getRoles().contains("SUPER_ADMIN")) ) {
-            throw new ResourceAccessForbiddenException("Not Access to Update product");
+        if (!(user.getRoles().contains(Roles.ADMIN.name()) || user.getRoles().contains(Roles.SUPER_ADMIN.name()))) {
+            throw new ResourceAccessForbiddenException("No Access to update product");
         }
+
         Product product = productService.updateProduct(id, updates);
         return new ResponseEntity<>(ProductDTO.fromProduct(product), HttpStatus.OK);
     }

@@ -6,6 +6,7 @@ import com.scaler.capstone.product.repositories.CategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,7 +22,8 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        if (categoryRepository.findByName(categoryDTO.getName()).isPresent()) {
+        Optional<Category> existingCategory = categoryRepository.findByNameAndIsDeletedFalse(categoryDTO.getName());
+        if (existingCategory.isPresent() && !existingCategory.get().isDeleted()) {
             throw new RuntimeException("Category with name '" + categoryDTO.getName() + "' already exists.");
         }
         Category category = new Category();
@@ -53,7 +55,7 @@ public class CategoryService {
     }
 
     public Optional<Category> getCategoryByName(String categoryName) {
-        Optional<Category> categoryOpt = categoryRepository.findByName(categoryName)
+        Optional<Category> categoryOpt = categoryRepository.findByNameAndIsDeletedFalse(categoryName)
                 .filter(cat -> !cat.isDeleted());
 
         return categoryOpt;

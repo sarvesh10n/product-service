@@ -16,7 +16,7 @@ public class CategoryDTO {
     public static CategoryDTO fromCategory(Category category) {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
-        categoryDTO.setName(categoryDTO.getName());
+        categoryDTO.setName(category.getName());
         return categoryDTO;
     }
 }

@@ -1,5 +1,6 @@
 package com.scaler.capstone.product.models;
 
+import com.scaler.capstone.product.enums.Roles;
 import com.scaler.capstone.product.models.cart.Cart;
 import jakarta.persistence.*;
 import lombok.Getter;
