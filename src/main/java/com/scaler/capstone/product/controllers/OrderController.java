@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/orders")
+@RequestMapping("orders")
 public class OrderController {
     private final OrderService orderService;
     private final UserRepository userRepository;
@@ -30,7 +30,7 @@ public class OrderController {
         this.userRepository = userRepository;
     }
 
-    // Place order (initiate payment)
+
     @PostMapping("/place")
     public ResponseEntity<OrderDTO> placeOrder(Authentication authentication) throws InsufficientStockException,
             NotFoundException, PaymentClientException {
@@ -41,7 +41,6 @@ public class OrderController {
         return new ResponseEntity<>(OrderDTO.fromOrder(order), HttpStatus.CREATED);
     }
 
-    // Confirm payment (called by frontend after payment completion)
     @PostMapping("/confirm-payment/{paymentOrderId}")
     public ResponseEntity<OrderDTO> confirmPayment(Authentication authentication, @PathVariable String paymentOrderId)
             throws NotFoundException, PaymentClientException {

@@ -25,16 +25,11 @@ public class ProductService {
 
     public Product createProduct(CreateProductDTO createProductDTO) throws InvalidDataException {
 
-        if(createProductDTO.getCategory() == null|| createProductDTO.getTitle() == null || createProductDTO.getDescription() == null
-                || createProductDTO.getRating()<0 || createProductDTO.getPrice()<0 || createProductDTO.getStockQuantity()<1)
-        {
-            throw new InvalidDataException("Invalid Request Body");
-        }
 
-        Optional<Category> optionalCategory = categoryRepository.findByName(createProductDTO.getCategory());
+        Optional<Category> existingCategory = categoryRepository.findByName(createProductDTO.getCategory());
         Category addCategory;
-        if (optionalCategory.isPresent()) {
-            addCategory = optionalCategory.get();
+        if (existingCategory.isPresent()) {
+            addCategory = existingCategory.get();
         }
         else {
             addCategory = new Category();
@@ -56,19 +51,19 @@ public class ProductService {
     }
 
     public Product getProductById(Long id) throws ProductNotExistException {
-        Optional<Product> optionalProduct = productRepository.findById(id);
+        Optional<Product> product = productRepository.findById(id);
 
-        if(optionalProduct.isEmpty())
+        if(product.isEmpty())
         {
-            throw new ProductNotExistException("Product not found with id: "+id);
+            throw new ProductNotExistException("Product id not found: "+id);
         }
 
-        if(optionalProduct.get().isDeleted())
+        if(product.get().isDeleted())
         {
-            throw new ProductNotExistException("Product with id: "+id+ " does not exist");
+            throw new ProductNotExistException("Product id: "+id+ " does not exist");
         }
 
-        return optionalProduct.get();
+        return product.get();
     }
 
     public Product updateProduct(Long id, Map<String, Object> updates) throws ProductNotExistException {
@@ -76,13 +71,13 @@ public class ProductService {
 
         if(optionalProduct.isEmpty())
         {
-            throw new ProductNotExistException("Product not found with id: "+id);
+            throw new ProductNotExistException("Product id not found: "+id);
         }
 
         Product product = optionalProduct.get();
         if(product.isDeleted())
         {
-            throw new ProductNotExistException("Product with id: "+id+ " does not exist");
+            throw new ProductNotExistException("Product id: "+id+ " does not exist");
         }
 
         updates.forEach((key, value) -> {
@@ -127,13 +122,13 @@ public class ProductService {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if(optionalProduct.isEmpty())
         {
-            throw new ProductNotExistException("Product not found with id: "+id);
+            throw new ProductNotExistException("Product id not found: "+id);
         }
 
         Product product = optionalProduct.get();
         if(product.isDeleted())
         {
-            throw new ProductNotExistException("Product with id: "+id+ " does not exist");
+            throw new ProductNotExistException("Product id: "+id+ " does not exist");
         }
         product.setDeleted(true);
     }

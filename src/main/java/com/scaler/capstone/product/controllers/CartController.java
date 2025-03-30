@@ -1,6 +1,6 @@
 package com.scaler.capstone.product.controllers;
 
-import com.scaler.capstone.product.dto.AddCartItemDTO;
+import com.scaler.capstone.product.dto.CartItemDTO;
 import com.scaler.capstone.product.dto.CartResponseDTO;
 import com.scaler.capstone.product.exceptions.InsufficientStockException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/carts")
+@RequestMapping("carts")
 public class CartController {
     private CartService cartService;
     private UserRepository userRepository;
@@ -28,11 +28,11 @@ public class CartController {
     }
 
     @PostMapping("/cart")
-    public ResponseEntity<CartResponseDTO> addToCart(Authentication authentication, @RequestBody AddCartItemDTO addCartItemDTO) throws InsufficientStockException, NotFoundException {
+    public ResponseEntity<CartResponseDTO> addToCart(Authentication authentication, @RequestBody CartItemDTO cartItemDTO) throws InsufficientStockException, NotFoundException {
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
 
-        Cart cart = cartService.addItemsToCart(user.getId(), addCartItemDTO);
+        Cart cart = cartService.addItemsToCart(user.getId(), cartItemDTO);
         return new ResponseEntity<>(CartResponseDTO.fromCart(cart), HttpStatus.CREATED);
     }
 

@@ -44,7 +44,7 @@ public class RazorpayPaymentClient implements PaymentServiceClient{
         {
             throw new PaymentClientException("Payment link not created.");
         }
-        System.out.println();
+
         return response.getBody();
     }
 
