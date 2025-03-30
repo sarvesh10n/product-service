@@ -1,11 +1,11 @@
 package com.scaler.capstone.product.services;
 
 import com.scaler.capstone.product.dto.CreateProductDTO;
+import com.scaler.capstone.product.exceptions.CategoryNotExistException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
 import com.scaler.capstone.product.exceptions.ProductNotExistException;
 import com.scaler.capstone.product.models.product.Category;
 import com.scaler.capstone.product.models.product.Product;
-import com.scaler.capstone.product.repositories.CategoryRepository;
 import com.scaler.capstone.product.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,28 +16,21 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private ProductRepository productRepository;
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
-    public Product createProduct(CreateProductDTO createProductDTO) throws InvalidDataException {
+    public Product createProduct(CreateProductDTO createProductDTO) throws InvalidDataException, CategoryNotExistException {
 
-
-        Optional<Category> existingCategory = categoryRepository.findByName(createProductDTO.getCategory());
-        Category addCategory;
-        if (existingCategory.isPresent()) {
-            addCategory = existingCategory.get();
-        }
-        else {
-            addCategory = new Category();
-            addCategory.setName(createProductDTO.getCategory());
-            categoryRepository.save(addCategory);
+        Optional<Category> existingCategory = categoryService.getCategoryByName(createProductDTO.getCategory());
+        if(existingCategory.isEmpty()){
+            throw new CategoryNotExistException("Category not exists : "+createProductDTO.getCategory());
         }
         Product product = new Product();
-        product.setCategory(addCategory);
+        product.setCategory(existingCategory.get());
         product.setTitle(createProductDTO.getTitle());
         product.setDescription(createProductDTO.getDescription());
         product.setPrice(createProductDTO.getPrice());
@@ -66,7 +59,7 @@ public class ProductService {
         return product.get();
     }
 
-    public Product updateProduct(Long id, Map<String, Object> updates) throws ProductNotExistException {
+    public Product updateProduct(Long id, Map<String, Object> updates) throws ProductNotExistException,CategoryNotExistException {
         Optional<Product> optionalProduct = productRepository.findById(id);
 
         if(optionalProduct.isEmpty())
@@ -80,7 +73,9 @@ public class ProductService {
             throw new ProductNotExistException("Product id: "+id+ " does not exist");
         }
 
-        updates.forEach((key, value) -> {
+        for (Map.Entry<String, Object> entry : updates.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
             switch (key) {
                 case "title":
                     product.setTitle((String) value);
@@ -99,22 +94,17 @@ public class ProductService {
                     break;
                 case "category":
                     String mapCategory = ((String) value);
-                    if(!product.getCategory().getName().equalsIgnoreCase(mapCategory))
-                    {
-                        Optional<Category> optionalCategory = categoryRepository.findByName(mapCategory);
-                        if(optionalCategory.isPresent()){
+                    if (!product.getCategory().getName().equalsIgnoreCase(mapCategory)) {
+                        Optional<Category> optionalCategory = categoryService.getCategoryByName(mapCategory);
+                        if (optionalCategory.isPresent()) {
                             product.setCategory(optionalCategory.get());
-                        }
-                        else {
-                            Category addCategory = new Category();
-                            addCategory.setName(mapCategory);
-                            categoryRepository.save(addCategory);
-                            product.setCategory(addCategory);
+                        } else {
+                            throw new CategoryNotExistException("Category not exists : " + mapCategory);
                         }
                     }
                     break;
             }
-        });
+        }
         return productRepository.save(product);
     }
 

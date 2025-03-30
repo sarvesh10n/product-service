@@ -50,6 +50,15 @@ public class ControllerAdvices {
         return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CategoryNotExistException.class)
+    ResponseEntity<ExceptionDTO> handleCategoryNotExistException(CategoryNotExistException ex){
+        ExceptionDTO exceptionDto = new ExceptionDTO(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

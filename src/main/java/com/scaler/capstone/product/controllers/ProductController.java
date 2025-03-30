@@ -2,6 +2,7 @@ package com.scaler.capstone.product.controllers;
 
 import com.scaler.capstone.product.dto.CreateProductDTO;
 import com.scaler.capstone.product.dto.ProductDTO;
+import com.scaler.capstone.product.exceptions.CategoryNotExistException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
 import com.scaler.capstone.product.exceptions.ProductNotExistException;
 import com.scaler.capstone.product.exceptions.ResourceAccessForbiddenException;
@@ -33,10 +34,10 @@ public class ProductController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/product")
+    @PostMapping("/create-product")
     public ResponseEntity<ProductDTO> createProduct(Authentication authentication,
                                                    @Valid @RequestBody CreateProductDTO createProductDTO)
-            throws InvalidDataException, ResourceAccessForbiddenException {
+            throws InvalidDataException, ResourceAccessForbiddenException,CategoryNotExistException {
 
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
@@ -67,9 +68,9 @@ public class ProductController {
         return new ResponseEntity<>(productDtoList, HttpStatus.OK);
     }
 
-    @PatchMapping("/product/{id}")
+    @PatchMapping("/update-product/{id}")
     public ResponseEntity<ProductDTO> updateProduct(Authentication authentication, @PathVariable long id,
-                                                    @RequestBody Map<String, Object> updates) throws ResourceAccessForbiddenException, ProductNotExistException {
+                                                    @RequestBody Map<String, Object> updates) throws ResourceAccessForbiddenException, ProductNotExistException, CategoryNotExistException {
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
 
