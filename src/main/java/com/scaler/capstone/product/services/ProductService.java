@@ -90,7 +90,7 @@ public class ProductService {
                     product.setRating((Double) value);
                     break;
                 case "stockQuantity":
-                    product.setRating((Integer) value);
+                    product.setStockQuantity((Integer) value);
                     break;
                 case "category":
                     String mapCategory = ((String) value);
