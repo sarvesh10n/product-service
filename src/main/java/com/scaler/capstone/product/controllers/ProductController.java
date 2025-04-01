@@ -1,6 +1,5 @@
 package com.scaler.capstone.product.controllers;
 
-import com.scaler.capstone.product.dto.CreateProductDTO;
 import com.scaler.capstone.product.dto.ProductDTO;
 import com.scaler.capstone.product.enums.Roles;
 import com.scaler.capstone.product.exceptions.CategoryNotExistException;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("products")
@@ -37,7 +35,7 @@ public class ProductController {
 
     @PostMapping("/create-product")
     public ResponseEntity<ProductDTO> createProduct(Authentication authentication,
-                                                   @Valid @RequestBody CreateProductDTO createProductDTO)
+                                                   @Valid @RequestBody ProductDTO productDTO)
             throws InvalidDataException, ResourceAccessForbiddenException,CategoryNotExistException {
 
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
@@ -47,7 +45,7 @@ public class ProductController {
             throw new ResourceAccessForbiddenException("No Access to create product");
         }
 
-        Product product = productService.createProduct(createProductDTO);
+        Product product = productService.createProduct(productDTO);
         return new ResponseEntity<>(ProductDTO.fromProduct(product), HttpStatus.CREATED);
     }
 
@@ -72,7 +70,7 @@ public class ProductController {
 
     @PatchMapping("/update-product/{id}")
     public ResponseEntity<ProductDTO> updateProduct(Authentication authentication, @PathVariable long id,
-                                                    @RequestBody Map<String, Object> updates) throws ResourceAccessForbiddenException, ProductNotExistException, CategoryNotExistException {
+                                                    @RequestBody ProductDTO productDTO) throws ResourceAccessForbiddenException, ProductNotExistException, CategoryNotExistException {
         Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
         User user = UserUtils.createUserIfNotExist(jwt, userRepository);
 
@@ -80,7 +78,7 @@ public class ProductController {
             throw new ResourceAccessForbiddenException("No Access to update product");
         }
 
-        Product product = productService.updateProduct(id, updates);
+        Product product = productService.updateProduct(id, productDTO);
         return new ResponseEntity<>(ProductDTO.fromProduct(product), HttpStatus.OK);
     }
 }

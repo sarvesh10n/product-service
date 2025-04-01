@@ -1,6 +1,6 @@
 package com.scaler.capstone.product.services;
 
-import com.scaler.capstone.product.dto.CreateProductDTO;
+import com.scaler.capstone.product.dto.ProductDTO;
 import com.scaler.capstone.product.exceptions.CategoryNotExistException;
 import com.scaler.capstone.product.exceptions.InvalidDataException;
 import com.scaler.capstone.product.exceptions.ProductNotExistException;
@@ -10,7 +10,6 @@ import com.scaler.capstone.product.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -23,19 +22,19 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
-    public Product createProduct(CreateProductDTO createProductDTO) throws InvalidDataException, CategoryNotExistException {
+    public Product createProduct(ProductDTO productDTO) throws InvalidDataException, CategoryNotExistException {
 
-        Optional<Category> existingCategory = categoryService.getCategoryByName(createProductDTO.getCategory());
+        Optional<Category> existingCategory = categoryService.getCategoryByName(productDTO.getCategory());
         if(existingCategory.isEmpty()){
-            throw new CategoryNotExistException("Category not exists : "+createProductDTO.getCategory());
+            throw new CategoryNotExistException("Category not exists : "+productDTO.getCategory());
         }
         Product product = new Product();
         product.setCategory(existingCategory.get());
-        product.setTitle(createProductDTO.getTitle());
-        product.setDescription(createProductDTO.getDescription());
-        product.setPrice(createProductDTO.getPrice());
-        product.setStockQuantity(createProductDTO.getStockQuantity());
-        product.setRating(createProductDTO.getRating());
+        product.setTitle(productDTO.getTitle());
+        product.setDescription(productDTO.getDescription());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity());
+        product.setRating(productDTO.getRating());
         return productRepository.save(product);
     }
 
@@ -59,7 +58,7 @@ public class ProductService {
         return product.get();
     }
 
-    public Product updateProduct(Long id, Map<String, Object> updates) throws ProductNotExistException,CategoryNotExistException {
+    public Product updateProduct(Long id, ProductDTO productDTO) throws ProductNotExistException,CategoryNotExistException {
         Optional<Product> optionalProduct = productRepository.findById(id);
 
         if(optionalProduct.isEmpty())
@@ -73,38 +72,36 @@ public class ProductService {
             throw new ProductNotExistException("Product id: "+id+ " does not exist");
         }
 
-        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            switch (key) {
-                case "title":
-                    product.setTitle((String) value);
-                    break;
-                case "description":
-                    product.setDescription((String) value);
-                    break;
-                case "price":
-                    product.setPrice((Double) value);
-                    break;
-                case "rating":
-                    product.setRating((Double) value);
-                    break;
-                case "stockQuantity":
-                    product.setStockQuantity((Integer) value);
-                    break;
-                case "category":
-                    String mapCategory = ((String) value);
-                    if (!product.getCategory().getName().equalsIgnoreCase(mapCategory)) {
-                        Optional<Category> optionalCategory = categoryService.getCategoryByName(mapCategory);
-                        if (optionalCategory.isPresent()) {
-                            product.setCategory(optionalCategory.get());
-                        } else {
-                            throw new CategoryNotExistException("Category not exists : " + mapCategory);
-                        }
-                    }
-                    break;
+        if(productDTO.getTitle()!=null){
+            product.setTitle(productDTO.getTitle());
+        }
+
+        if(productDTO.getDescription()!=null){
+            product.setDescription(productDTO.getDescription());
+        }
+
+        if(productDTO.getPrice()!=null){
+            product.setPrice(productDTO.getPrice());
+        }
+
+        if(productDTO.getRating()!=null){
+            product.setRating(productDTO.getRating());
+        }
+        if(productDTO.getStockQuantity()!=null){
+            product.setStockQuantity(product.getStockQuantity());
+        }
+        if(productDTO.getCategory()!=null){
+            String existingCategoroy = productDTO.getCategory();
+            if (!product.getCategory().getName().equalsIgnoreCase(existingCategoroy)) {
+                Optional<Category> optionalCategory = categoryService.getCategoryByName(existingCategoroy);
+                if (optionalCategory.isPresent()) {
+                    product.setCategory(optionalCategory.get());
+                } else {
+                    throw new CategoryNotExistException("Category not exists : " + existingCategoroy);
+                }
             }
         }
+
         return productRepository.save(product);
     }
 
