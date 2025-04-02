@@ -60,9 +60,16 @@ public class CategoryController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(
+    public ResponseEntity<CategoryDTO> updateCategory(Authentication authentication,
             @PathVariable Long id,
-            @RequestBody CategoryDTO categoryDTO) {
+            @RequestBody CategoryDTO categoryDTO) throws ResourceAccessForbiddenException {
+
+        Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
+        User user = UserUtils.createUserIfNotExist(jwt, userRepository);
+
+        if (!(user.getRoles().contains(Roles.ADMIN.name()) || user.getRoles().contains(Roles.SUPER_ADMIN.name()))) {
+            throw new ResourceAccessForbiddenException("No Access to update category");
+        }
         CategoryDTO updatedCategory = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok(updatedCategory);
     }
